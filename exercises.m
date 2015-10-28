@@ -413,7 +413,7 @@ end
 
 if do_chi2_NN_classification
     % compute pair-wise CHI2
-    
+    bof_chi2dist = zeros(size(bof_test,1), size(bof_train, 1));
     for i = 1:size(bof_test, 1)
         for j = 1:size(bof_train, 1)
             bof_chi2dist(i, j) = chi2(bof_test(i, :), bof_train(j, :));
