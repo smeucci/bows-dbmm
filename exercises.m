@@ -75,7 +75,7 @@ num_train_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
+nwords_codebook = 50;
 
 % image file extension
 file_ext='jpg';
@@ -231,21 +231,21 @@ end
 if do_feat_quantization
     fprintf('\nFeature quantization (hard-assignment)...\n');
     for i=1:length(desc_train)  
-      
-      %...
-      
+      dmat = eucliddist(desc_train(i).sift, VC);
+      [mv, visword] = min(dmat, [], 2);
+
       % save feature labels
-      %desc_train(i).visword = visword;
-      %desc_train(i).quantdist = quantdist;
+      desc_train(i).visword = visword;
+      desc_train(i).quantdist = mv;
     end
 
     for i=1:length(desc_test)    
-      
-      %...
-      
+      dmat = eucliddist(desc_test(i).sift, VC);
+      [mv, visword] = min(dmat, [], 2);
+
       % save feature labels
-      %desc_test(i).visword = visword;
-      %desc_test(i).quantdist = quantdist;
+      desc_test(i).visword = visword;
+      desc_test(i).quantdist = mv;
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -312,25 +312,25 @@ N = size(VC,1); % number of visual words
 for i=1:length(desc_train) 
     visword = desc_train(i).visword;    
     
-    %H =...
+    H = histc(visword, 1:size(VC, 1));
   
     % normalize bow-hist (L1 norm)
-    % ...
-  
+    h = H ./ length(visword);
+    
     % save histograms
-    %desc_train(i).bof = ...
+    desc_train(i).bof = h;
 end
 
 for i=1:length(desc_test) 
     visword = desc_test(i).visword;  
     
-    %H =...
+    H = histc(visword, 1:size(VC, 1));
   
     % normalize bow-hist (L1 norm)
-    % ...
+    h = H ./ length(visword);
     
     % save histograms
-    %desc_test(i).bof = ...
+    desc_test(i).bof = h;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
