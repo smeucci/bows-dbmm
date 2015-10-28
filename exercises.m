@@ -46,7 +46,7 @@ do_form_codebook = 1;
 do_feat_quantization = 1;
 
 do_L2_NN_classification = 1;
-do_chi2_NN_classification = 0;
+do_chi2_NN_classification = 1;
 do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
@@ -55,7 +55,7 @@ do_svm_chi2_classification = 0;
 
 visualize_feat = 0;
 visualize_words = 0;
-visualize_confmat = 0;
+visualize_confmat = 1;
 visualize_res = 0;
 have_screen = ~isempty(getenv('DISPLAY'));
 
@@ -318,7 +318,7 @@ for i=1:length(desc_train)
     h = H ./ length(visword);
     
     % save histograms
-    desc_train(i).bof = h;
+    desc_train(i).bof = h';
 end
 
 for i=1:length(desc_test) 
@@ -330,7 +330,7 @@ for i=1:length(desc_test)
     h = H ./ length(visword);
     
     % save histograms
-    desc_test(i).bof = h;
+    desc_test(i).bof = h';
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,7 +414,11 @@ end
 if do_chi2_NN_classification
     % compute pair-wise CHI2
     
-    %bof_chi2dist = ...
+    for i = 1:size(bof_test, 1)
+        for j = 1:size(bof_train, 1)
+            bof_chi2dist(i, j) = chi2(bof_test(i, :), bof_train(j, :));
+        end
+    end
 
     % Nearest neighbor classification (1-NN) using Chi2 distance
     [mv,mi] = min(bof_chi2dist,[],2);
