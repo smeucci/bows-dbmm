@@ -1,7 +1,7 @@
 % function chi = chi2(h,g)
 % 
 % Compute Chi2 statistics between two L1 normalized vectors, h and g.
-function ci = chi2(h,g)
+function chi = chi2(h,g)
 
   h = h./(sum(h)+eps);
   g = g./(sum(g)+eps);
