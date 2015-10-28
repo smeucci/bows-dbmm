@@ -47,10 +47,10 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 0;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 0;
 
 visualize_feat = 0;
@@ -570,7 +570,7 @@ if do_svm_inter_classification
     for i=1:size(bof_train,1)
         for j=1:size(bof_train,1)
             
-            %Ktrain(i,j) = ...
+            Ktrain(i,j) = sum(min(bof_train(i,:), bof_train(j,:)));
         end
     end
 
@@ -578,7 +578,7 @@ if do_svm_inter_classification
     for i=1:size(bof_test,1)
         for j=1:size(bof_train,1)
             
-            %Ktest(i,j) = ...
+            Ktest(i,j) = sum(min(bof_test(i,:), bof_train(j,:)));
         end
     end
 
