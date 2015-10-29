@@ -52,6 +52,7 @@ do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
+do_svm_rbf_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
@@ -664,6 +665,40 @@ if do_svm_chi2_classification
     compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
+end
+
+%% 4.3 & 4.4: RBF KERNEL %%%%%%%%%%%%%%%%%%%%%%%%%%%
+if do_svm_rbf_classification
+% cross-validation
+C_vals=log2space(2,10,5);
+Gamma_vals = log2space(-5, 10, 10);
+
+% choosing best c and gamma values
+Acc_best = 0;
+for i=1:length(C_vals);
+    for j=1:length(Gamma_vals)
+        opt_string=['-t 2 -v 5 -c ' num2str(C_vals(i)) ' -g ' num2str(Gamma_vals(j))];
+        xval_acc=svmtrain(labels_train,bof_train,opt_string);
+        if xval_acc > Acc_best
+            Acc_best = xval_acc;
+            C_best = C_vals(i);
+            G_best = Gamma_vals(j);
+        end
+    end
+end
+
+% train the model and test
+model=svmtrain(labels_train,bof_train,['-t 2 -c ' num2str(C_best) ' -g ' num2str(G_best)] );
+% we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
+% consider this if the kernel is computationally inefficient.
+disp('*** SVM - RBF Gaussian kernel ***');
+[precomp_rbf_svm_lab,conf]=svmpredict(labels_test, bof_test, model);
+
+method_name='SVM RBF Gaussian';
+% Compute classification accuracy
+compute_accuracy(data,labels_test,precomp_rbf_svm_lab,classes,method_name,desc_test,...
+                  visualize_confmat & have_screen,... 
+                  visualize_res & have_screen);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
