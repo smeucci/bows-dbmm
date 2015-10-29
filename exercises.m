@@ -254,7 +254,11 @@ end
 %   End of EXERCISE 1                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% EXERCISE 6.1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                         %
+%   EXERCISE 6.1: Feature quantization using soft-assignment              %
+%                                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if do_soft_feat_quantization
     fprintf('\nFeature quantization (soft-assignment)...\n');
@@ -262,27 +266,23 @@ if do_soft_feat_quantization
     sigma = 200; 
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
-      [~, hard_visword] = min(dmat, [], 2);
       kernel_codebook =  gaussianKernel(dmat, sigma);
 
       % save feature labels
-      desc_train(i).visword = hard_visword;
       desc_train(i).quantdist = double(kernel_codebook);
     end
 
     for i=1:length(desc_test)    
       dmat = eucliddist(desc_test(i).sift, VC);
-      [~, hard_visword] = min(dmat, [], 2);
       kernel_codebook =  gaussianKernel(dmat, sigma);
 
       % save feature labels
-      desc_test(i).visword = hard_visword;
       desc_test(i).quantdist = double(kernel_codebook);
     end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   End of EXERCISE 6.1                                                    %
+%   End of EXERCISE 6.1                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -344,34 +344,38 @@ N = size(VC,1); % number of visual words
 
 for i=1:length(desc_train) 
     
+    %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
     if do_feat_quantization
         visword = desc_train(i).visword;    
-        h = histc(visword, 1:size(VC, 1));        
+        h = histc(visword, 1:size(VC, 1))';        
     elseif do_soft_feat_quantization
-        h = sum(desc_train(i).quantdist, 1)';
+        h = sum(desc_train(i).quantdist, 1);
     end
+    %%%%% End of EXERCIZE 6.1 %%%%%%
     
     % normalize bow-hist (L1 norm)
     h = h ./ norm(h, 1);
     
     % save histograms
-    desc_train(i).bof = h';
+    desc_train(i).bof = h;
 end
 
 for i=1:length(desc_test) 
     
+    %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
     if do_feat_quantization
         visword = desc_test(i).visword;    
-        h = histc(visword, 1:size(VC, 1));        
+        h = histc(visword, 1:size(VC, 1))';        
     elseif do_soft_feat_quantization
-        h = sum(desc_test(i).quantdist, 1)';
+        h = sum(desc_test(i).quantdist, 1);
     end
+    %%%%% End of EXERCIZE 6.1 %%%%%%
     
     % normalize bow-hist (L1 norm)
     h = h ./ norm(h, 1);
     
     % save histograms
-    desc_test(i).bof = h';
+    desc_test(i).bof = h;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
