@@ -34,8 +34,8 @@ dataset_dir='4_ObjectCategories';
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-%desc_name = 'sift';
-desc_name = 'dsift';
+desc_name = 'sift';
+%desc_name = 'dsift';
 %desc_name = 'msdsift';
 
 % FLAGS
@@ -73,7 +73,7 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 400;
+num_train_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
@@ -254,31 +254,30 @@ end
 %   End of EXERCISE 1                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   EXERCISE 6.1                                                    %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% EXERCISE 6.1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if do_soft_feat_quantization
     fprintf('\nFeature quantization (soft-assignment)...\n');
+    
+    sigma = 200; 
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
-      
-      
-      
-      [mv, visword] = min(dmat, [], 2);
+      [~, hard_visword] = min(dmat, [], 2);
+      kernel_codebook =  gaussianKernel(dmat, sigma);
 
       % save feature labels
-      desc_train(i).visword = visword;
-      desc_train(i).quantdist = mv;
+      desc_train(i).visword = hard_visword;
+      desc_train(i).quantdist = double(kernel_codebook);
     end
 
     for i=1:length(desc_test)    
       dmat = eucliddist(desc_test(i).sift, VC);
-      [mv, visword] = min(dmat, [], 2);
+      [~, hard_visword] = min(dmat, [], 2);
+      kernel_codebook =  gaussianKernel(dmat, sigma);
 
       % save feature labels
-      desc_test(i).visword = visword;
-      desc_test(i).quantdist = mv;
+      desc_test(i).visword = hard_visword;
+      desc_test(i).quantdist = double(kernel_codebook);
     end
 end
 
@@ -344,24 +343,32 @@ end
 N = size(VC,1); % number of visual words
 
 for i=1:length(desc_train) 
-    visword = desc_train(i).visword;    
     
-    H = histc(visword, 1:size(VC, 1));
-  
+    if do_feat_quantization
+        visword = desc_train(i).visword;    
+        h = histc(visword, 1:size(VC, 1));        
+    elseif do_soft_feat_quantization
+        h = sum(desc_train(i).quantdist, 1)';
+    end
+    
     % normalize bow-hist (L1 norm)
-    h = H ./ length(visword);
+    h = h ./ norm(h, 1);
     
     % save histograms
     desc_train(i).bof = h';
 end
 
 for i=1:length(desc_test) 
-    visword = desc_test(i).visword;  
     
-    H = histc(visword, 1:size(VC, 1));
-  
+    if do_feat_quantization
+        visword = desc_test(i).visword;    
+        h = histc(visword, 1:size(VC, 1));        
+    elseif do_soft_feat_quantization
+        h = sum(desc_test(i).quantdist, 1)';
+    end
+    
     % normalize bow-hist (L1 norm)
-    h = H ./ length(visword);
+    h = h ./ norm(h, 1);
     
     % save histograms
     desc_test(i).bof = h';
