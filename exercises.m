@@ -40,23 +40,24 @@ desc_name = 'dsift';
 
 % FLAGS
 do_feat_extraction = 0;
-do_split_sets = 0;
+do_split_sets = 1;
 
 do_form_codebook = 1;
-do_feat_quantization = 1;
+do_feat_quantization = 0;
+do_soft_feat_quantization = 1;
 
-do_L2_NN_classification = 0;
-do_chi2_NN_classification = 0;
-do_svm_linar_classification = 0;
+do_L2_NN_classification = 1;
+do_chi2_NN_classification = 1;
+do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 do_svm_rbf_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
-visualize_confmat = 1;
+visualize_confmat = 0;
 visualize_res = 0;
 have_screen = ~isempty(getenv('DISPLAY'));
 
@@ -72,11 +73,11 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 30;
+num_train_img = 400;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 50;
+nwords_codebook = 500;
 
 % image file extension
 file_ext='jpg';
@@ -251,6 +252,38 @@ if do_feat_quantization
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   End of EXERCISE 1                                                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   EXERCISE 6.1                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if do_soft_feat_quantization
+    fprintf('\nFeature quantization (soft-assignment)...\n');
+    for i=1:length(desc_train)  
+      dmat = eucliddist(desc_train(i).sift, VC);
+      
+      
+      
+      [mv, visword] = min(dmat, [], 2);
+
+      % save feature labels
+      desc_train(i).visword = visword;
+      desc_train(i).quantdist = mv;
+    end
+
+    for i=1:length(desc_test)    
+      dmat = eucliddist(desc_test(i).sift, VC);
+      [mv, visword] = min(dmat, [], 2);
+
+      % save feature labels
+      desc_test(i).visword = visword;
+      desc_test(i).quantdist = mv;
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   End of EXERCISE 6.1                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
