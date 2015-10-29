@@ -689,6 +689,7 @@ end
 
 % train the model and test
 model=svmtrain(labels_train,bof_train,['-t 2 -c ' num2str(C_best) ' -g ' num2str(G_best)] );
+
 % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
 % consider this if the kernel is computationally inefficient.
 disp('*** SVM - RBF Gaussian kernel ***');
