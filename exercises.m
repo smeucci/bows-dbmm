@@ -49,9 +49,9 @@ do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
-do_svm_chi2_classification = 0;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
+do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
@@ -611,21 +611,49 @@ end
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if do_svm_chi2_classification    
-    % compute kernel matrix    
-    %Ktrain = ...
-    %Ktest = ...
+if do_svm_chi2_classification  
     
-    % cross-validation
-    C_vals=log2space(2,10,5);
-    for i=1:length(C_vals);
-        opt_string=['-t 4  -v 5 -c ' num2str(C_vals(i))];
-        xval_acc(i)=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],opt_string);
+    % compute kernel matrix
+    chi2_dist_train=zeros(size(bof_train,1),size(bof_train,1));
+    for i=1:size(bof_train,1)
+        for j=1:size(bof_train,1)
+            
+            chi2_dist_train(i,j) = chi2(bof_train(i,:), bof_train(j,:));
+            
+        end
     end
-    [v,ind]=max(xval_acc);
 
+    chi2_dist_test=zeros(size(bof_test,1),size(bof_train,1));
+    for i=1:size(bof_test,1)
+        for j=1:size(bof_train,1)
+   
+            chi2_dist_test(i,j) = chi2(bof_test(i,:), bof_train(j,:));
+            
+        end
+    end
+
+    % cross-validation
+    Acc_best = 0;
+    C_vals=log2space(2,10,5);
+    gamma_vals = log2space(-5, 10, 10);
+    
+    for i=1:length(C_vals);
+        for j=1:length(gamma_vals)
+            Ktrain = exp(-gamma_vals(j)*chi2_dist_train);
+            opt_string=['-t 4  -v 5 -c ' num2str(C_vals(i))];
+            xval_acc=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],opt_string);
+            if xval_acc > Acc_best
+                Acc_best = xval_acc;
+                C_best = C_vals(i);
+                gamma_best = gamma_vals(j);
+            end
+        end
+    end
+    
+    Ktrain = exp(-gamma_best*chi2_dist_train);
+    Ktest = exp(-gamma_best*chi2_dist_test);
     % train the model and test
-    model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
+    model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_best)] );
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
     disp('*** SVM - Chi2 kernel ***');
