@@ -267,16 +267,20 @@ if do_soft_feat_quantization
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
       kernel_codebook =  gaussianKernel(dmat, sigma);
-
+      [~, hard_visword] = min(dmat, [], 2);
+      
       % save feature labels
+      desc_train(i).visword = hard_visword;
       desc_train(i).quantdist = double(kernel_codebook);
     end
 
     for i=1:length(desc_test)    
       dmat = eucliddist(desc_test(i).sift, VC);
       kernel_codebook =  gaussianKernel(dmat, sigma);
-
+      [~, hard_visword] = min(dmat, [], 2);
+      
       % save feature labels
+      desc_test(i).visword = hard_visword;
       desc_test(i).quantdist = double(kernel_codebook);
     end
 end
