@@ -269,8 +269,10 @@ if do_soft_feat_quantization
       kernel_codebook =  gaussianKernel(dmat, sigma);
       [~, hard_visword] = min(dmat, [], 2);
       
-      % save feature labels
+      % save feature labels     
+      % hard assignment for backward compatibility
       desc_train(i).visword = hard_visword;
+      % soft feature quantization assignment
       desc_train(i).quantdist = double(kernel_codebook);
     end
 
@@ -280,7 +282,9 @@ if do_soft_feat_quantization
       [~, hard_visword] = min(dmat, [], 2);
       
       % save feature labels
+      % hard assignment for backward compatibility
       desc_test(i).visword = hard_visword;
+      % soft feature quantization assignment
       desc_test(i).quantdist = double(kernel_codebook);
     end
 end
