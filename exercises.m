@@ -377,6 +377,7 @@ for i=1:length(desc_train)
             codeword_uncertainty(j) = sum(arg)/size(desc_train(i).quantdist, 1);
         end
         h = codeword_uncertainty;
+        
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
     
@@ -408,6 +409,7 @@ for i=1:length(desc_test)
             codeword_uncertainty(j) = sum(arg)/size(desc_test(i).quantdist, 1);            
         end
         h = codeword_uncertainty;
+        
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
     
