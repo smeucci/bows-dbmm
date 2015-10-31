@@ -44,7 +44,10 @@ do_split_sets = 1;
 
 do_form_codebook = 1;
 do_feat_quantization = 0;
-do_soft_feat_quantization = 1;
+
+%the following flags are mutually exclusive
+do_soft_feat_quantization_KCB = 0;
+do_soft_feat_quantization_UNC = 1;
 
 do_L2_NN_classification = 1;
 do_chi2_NN_classification = 1;
@@ -260,32 +263,35 @@ end
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if do_soft_feat_quantization
-    fprintf('\nFeature quantization (soft-assignment)...\n');
-    
+if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
+    if do_soft_feat_quantization_KCB
+        fprintf('\nFeature quantization (soft-assignment with Kernel Codebook)...\n');
+    elseif do_soft_feat_quantization_UNC
+        fprintf('\nFeature quantization (soft-assignment with Codeword Uncertainty)...\n');
+    end
     sigma = 200; 
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
-      kernel_codebook =  gaussianKernel(dmat, sigma);
+      gaussian_kernel =  gaussianKernel(dmat, sigma);
       [~, hard_visword] = min(dmat, [], 2);
       
       % save feature labels     
       % hard assignment for backward compatibility
       desc_train(i).visword = hard_visword;
       % soft feature quantization assignment
-      desc_train(i).quantdist = double(kernel_codebook);
+      desc_train(i).quantdist = double(gaussian_kernel);
     end
 
     for i=1:length(desc_test)    
       dmat = eucliddist(desc_test(i).sift, VC);
-      kernel_codebook =  gaussianKernel(dmat, sigma);
+      gaussian_kernel =  gaussianKernel(dmat, sigma);
       [~, hard_visword] = min(dmat, [], 2);
       
       % save feature labels
       % hard assignment for backward compatibility
       desc_test(i).visword = hard_visword;
       % soft feature quantization assignment
-      desc_test(i).quantdist = double(kernel_codebook);
+      desc_test(i).quantdist = double(gaussian_kernel);
     end
 end
 
@@ -354,10 +360,23 @@ for i=1:length(desc_train)
     
     %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
     if do_feat_quantization
+        
         visword = desc_train(i).visword;    
-        h = histc(visword, 1:size(VC, 1))';        
-    elseif do_soft_feat_quantization
-        h = sum(desc_train(i).quantdist, 1);
+        h = histc(visword, 1:size(VC, 1))';
+        
+    elseif do_soft_feat_quantization_KCB
+        
+        kernel_codebook = sum(desc_train(i).quantdist, 1);
+        h = kernel_codebook;
+        
+    elseif do_soft_feat_quantization_UNC
+        
+        den = sum(desc_train(i).quantdist, 2);
+        for j=1:length(VC)
+            arg = desc_train(i).quantdist(:,j)./den;
+            codeword_uncertainty(j) = sum(arg)/size(desc_train(i).quantdist, 1);
+        end
+        h = codeword_uncertainty;
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
     
@@ -372,10 +391,22 @@ for i=1:length(desc_test)
     
     %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
     if do_feat_quantization
+        
         visword = desc_test(i).visword;    
-        h = histc(visword, 1:size(VC, 1))';        
-    elseif do_soft_feat_quantization
+        h = histc(visword, 1:size(VC, 1))';
+        
+    elseif do_soft_feat_quantization_KCB
+        
         h = sum(desc_test(i).quantdist, 1);
+        
+    elseif do_soft_feat_quantization_UNC
+        
+        den = sum(desc_test(i).quantdist, 2);
+        for j=1:length(VC)
+            arg = desc_test(i).quantdist(:,j)./den;
+            h(j) = sum(arg)/size(desc_test(i).quantdist, 1);
+            
+        end
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
     
