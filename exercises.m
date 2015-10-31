@@ -722,25 +722,27 @@ if do_svm_chi2_classification
     % cross-validation
     Acc_best = 0;
     C_vals=log2space(2,10,5);
-    gamma_vals = log2space(-5, 10, 10);
+    Gamma_vals = log2space(-5, 10, 10);
     
     for i=1:length(C_vals);
-        for j=1:length(gamma_vals)
-            Ktrain = exp(-gamma_vals(j)*chi2_dist_train);
+        for j=1:length(Gamma_vals)
+            Ktrain = exp(-Gamma_vals(j)*chi2_dist_train);
             opt_string=['-t 4  -v 5 -c ' num2str(C_vals(i))];
             xval_acc=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],opt_string);
             if xval_acc > Acc_best
                 Acc_best = xval_acc;
                 C_best = C_vals(i);
-                gamma_best = gamma_vals(j);
+                Gamma_best = Gamma_vals(j);
             end
         end
     end
     
-    Ktrain = exp(-gamma_best*chi2_dist_train);
-    Ktest = exp(-gamma_best*chi2_dist_test);
+    Ktrain = exp(-Gamma_best*chi2_dist_train);
+    Ktest = exp(-Gamma_best*chi2_dist_test);
+    
     % train the model and test
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_best)] );
+    
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
     disp('*** SVM - Chi2 kernel ***');
@@ -755,37 +757,37 @@ end
 
 %% 4.3 & 4.4: RBF KERNEL %%%%%%%%%%%%%%%%%%%%%%%%%%%
 if do_svm_rbf_classification
-% cross-validation
-C_vals=log2space(2,10,5);
-Gamma_vals = log2space(-5, 10, 10);
+    % cross-validation
+    C_vals=log2space(2,10,5);
+    Gamma_vals = log2space(-5, 10, 10);
 
-% choosing best c and gamma values
-Acc_best = 0;
-for i=1:length(C_vals);
-    for j=1:length(Gamma_vals)
-        opt_string=['-t 2 -v 5 -c ' num2str(C_vals(i)) ' -g ' num2str(Gamma_vals(j))];
-        xval_acc=svmtrain(labels_train,bof_train,opt_string);
-        if xval_acc > Acc_best
-            Acc_best = xval_acc;
-            C_best = C_vals(i);
-            G_best = Gamma_vals(j);
+    % choosing best c and gamma values
+    Acc_best = 0;
+    for i=1:length(C_vals);
+        for j=1:length(Gamma_vals)
+            opt_string=['-t 2 -v 5 -c ' num2str(C_vals(i)) ' -g ' num2str(Gamma_vals(j))];
+            xval_acc=svmtrain(labels_train,bof_train,opt_string);
+            if xval_acc > Acc_best
+                Acc_best = xval_acc;
+                C_best = C_vals(i);
+                Gamma_best = Gamma_vals(j);
+            end
         end
     end
-end
 
-% train the model and test
-model=svmtrain(labels_train,bof_train,['-t 2 -c ' num2str(C_best) ' -g ' num2str(G_best)] );
+    % train the model and test
+    model=svmtrain(labels_train,bof_train,['-t 2 -c ' num2str(C_best) ' -g ' num2str(Gamma_best)] );
 
-% we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
-% consider this if the kernel is computationally inefficient.
-disp('*** SVM - RBF Gaussian kernel ***');
-[precomp_rbf_svm_lab,conf]=svmpredict(labels_test, bof_test, model);
+    % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
+    % consider this if the kernel is computationally inefficient.
+    disp('*** SVM - RBF Gaussian kernel ***');
+    [precomp_rbf_svm_lab,conf]=svmpredict(labels_test, bof_test, model);
 
-method_name='SVM RBF Gaussian';
-% Compute classification accuracy
-compute_accuracy(data,labels_test,precomp_rbf_svm_lab,classes,method_name,desc_test,...
-                  visualize_confmat & have_screen,... 
-                  visualize_res & have_screen);
+    method_name='SVM RBF Gaussian';
+    % Compute classification accuracy
+    compute_accuracy(data,labels_test,precomp_rbf_svm_lab,classes,method_name,desc_test,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
