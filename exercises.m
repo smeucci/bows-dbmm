@@ -397,16 +397,17 @@ for i=1:length(desc_test)
         
     elseif do_soft_feat_quantization_KCB
         
-        h = sum(desc_test(i).quantdist, 1);
+        kernel_codebook = sum(desc_test(i).quantdist, 1);
+        h = kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
         
         den = sum(desc_test(i).quantdist, 2);
         for j=1:length(VC)
             arg = desc_test(i).quantdist(:,j)./den;
-            h(j) = sum(arg)/size(desc_test(i).quantdist, 1);
-            
+            codeword_uncertainty(j) = sum(arg)/size(desc_test(i).quantdist, 1);            
         end
+        h = codeword_uncertainty;
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
     
