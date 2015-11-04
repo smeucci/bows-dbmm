@@ -7,3 +7,6 @@
 *.log
 
 *.gz
+
+img/*
+lib/*
