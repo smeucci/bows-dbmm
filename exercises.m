@@ -43,12 +43,12 @@ do_feat_extraction = 0;
 do_split_sets = 1;
 
 do_form_codebook = 1;
-do_feat_quantization = 0;
+do_hard_feat_quantization = 0;
 
 %the following flags are mutually exclusive
+gaussian_kernel_sigma = 100;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
-
 do_truncated_soft_assignment = 1;
  
 
@@ -239,7 +239,7 @@ end
 %     [mv,visword]=min(dmat,[],2); if you compute dmat as 
 %     dmat=eucliddist(dscr(i).sift,VC);
 
-if do_feat_quantization
+if do_hard_feat_quantization
     fprintf('\nFeature quantization (hard-assignment)...\n');
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
@@ -274,16 +274,15 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
         fprintf('\nFeature quantization (soft-assignment with Kernel Codebook)...\n');
     elseif do_soft_feat_quantization_UNC
         fprintf('\nFeature quantization (soft-assignment with Codeword Uncertainty)...\n');
-    end
-    sigma = 200; 
+    end 
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
       [~, hard_visword] = min(dmat, [], 2);
       if do_truncated_soft_assignment
           dmat_trunc = kNearestNeighbours(dmat, num_knn);
-          gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+          gaussian_kernel = gaussianKernel(dmat_trunc, gaussian_kernel_sigma);
       else
-          gaussian_kernel =  gaussianKernel(dmat, sigma);
+          gaussian_kernel = gaussianKernel(dmat, gaussian_kernel_sigma);
       end
       
       % save feature labels     
@@ -298,9 +297,9 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
       [~, hard_visword] = min(dmat, [], 2);
       if do_truncated_soft_assignment
           dmat_trunc = kNearestNeighbours(dmat, num_knn);
-          gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+          gaussian_kernel = gaussianKernel(dmat_trunc, gaussian_kernel_sigma);
       else
-          gaussian_kernel =  gaussianKernel(dmat, sigma);
+          gaussian_kernel =  gaussianKernel(dmat, gaussian_kernel_sigma);
       end
       
       % save feature labels
@@ -375,7 +374,7 @@ N = size(VC,1); % number of visual words
 for i=1:length(desc_train) 
     
     %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
-    if do_feat_quantization
+    if do_hard_feat_quantization
         
         visword = desc_train(i).visword;    
         h = histc(visword, 1:size(VC, 1))';
@@ -407,7 +406,7 @@ end
 for i=1:length(desc_test) 
     
     %%%%% EXERCIZE 6.1 %%%%%%%%%%%%%
-    if do_feat_quantization
+    if do_hard_feat_quantization
         
         visword = desc_test(i).visword;    
         h = histc(visword, 1:size(VC, 1))';
