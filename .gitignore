@@ -1,3 +1,9 @@
 
 *.m~
 /.project
+
+*.aux
+
+*.log
+
+*.gz
