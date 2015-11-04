@@ -49,6 +49,9 @@ do_feat_quantization = 0;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
 
+do_truncated_soft_assignment = 1;
+ 
+
 do_L2_NN_classification = 1;
 do_chi2_NN_classification = 1;
 do_svm_linar_classification = 1;
@@ -81,6 +84,9 @@ num_train_img = 30;
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
+
+% k-nearest neighbours for truncated soft assignment
+num_knn = nwords_codebook/10;
 
 % image file extension
 file_ext='jpg';
@@ -272,8 +278,13 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
     sigma = 200; 
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
-      gaussian_kernel =  gaussianKernel(dmat, sigma);
       [~, hard_visword] = min(dmat, [], 2);
+      if do_truncated_soft_assignment
+          dmat_trunc = kNearestNeighbours(dmat, num_knn);
+          gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+      else
+          gaussian_kernel =  gaussianKernel(dmat, sigma);
+      end
       
       % save feature labels     
       % hard assignment for backward compatibility
@@ -284,8 +295,13 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
 
     for i=1:length(desc_test)    
       dmat = eucliddist(desc_test(i).sift, VC);
-      gaussian_kernel =  gaussianKernel(dmat, sigma);
       [~, hard_visword] = min(dmat, [], 2);
+      if do_truncated_soft_assignment
+          dmat_trunc = kNearestNeighbours(dmat, num_knn);
+          gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+      else
+          gaussian_kernel =  gaussianKernel(dmat, sigma);
+      end
       
       % save feature labels
       % hard assignment for backward compatibility
@@ -366,7 +382,7 @@ for i=1:length(desc_train)
         
     elseif do_soft_feat_quantization_KCB
         
-        kernel_codebook = sum(desc_train(i).quantdist, 1);
+        kernel_codebook = sum(desc_train(i).quantdist, 1)/size(desc_train(i).quantdist, 1);
         h = kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
@@ -398,7 +414,7 @@ for i=1:length(desc_test)
         
     elseif do_soft_feat_quantization_KCB
         
-        kernel_codebook = sum(desc_test(i).quantdist, 1);
+        kernel_codebook = sum(desc_test(i).quantdist, 1)/size(desc_test(i).quantdist, 1);
         h = kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
