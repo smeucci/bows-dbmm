@@ -44,12 +44,12 @@ do_feat_extraction = 0;
 do_split_sets = 1;
 
 do_form_codebook = 1;
-do_hard_feat_quantization = 1;
+do_hard_feat_quantization = 0;
 
 gaussian_kernel_sigma = 100;
 do_soft_feat_quantization_KCB = 0;
-do_soft_feat_quantization_UNC = 0;
-do_truncated_soft_assignment = 0;
+do_soft_feat_quantization_UNC = 1;
+do_truncated_soft_assignment = 1;
 
 do_L2_NN_classification = 1;
 do_chi2_NN_classification = 1;
@@ -78,7 +78,7 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 30;
+num_train_img = 50;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
@@ -288,7 +288,7 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
       % hard assignment for backward compatibility
       desc_train(i).visword = hard_visword;
       % soft feature quantization assignment
-      desc_train(i).quantdist = double(gaussian_kernel);
+      desc_train(i).quantdist = gaussian_kernel;
     end
 
     for i=1:length(desc_test)    
@@ -298,16 +298,20 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
           dmat_trunc = kNearestNeighbours(dmat, num_knn);
           gaussian_kernel = gaussianKernel(dmat_trunc, gaussian_kernel_sigma);
       else
-          gaussian_kernel =  gaussianKernel(dmat, gaussian_kernel_sigma);
+          gaussian_kernel = gaussianKernel(dmat, gaussian_kernel_sigma);
       end
       
       % save feature labels
       % hard assignment for backward compatibility
       desc_test(i).visword = hard_visword;
       % soft feature quantization assignment
-      desc_test(i).quantdist = double(gaussian_kernel);
+      desc_test(i).quantdist = gaussian_kernel;
     end
 end
+
+clear dmat;
+clear hard_visword;
+clear gaussian_kernel;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   End of EXERCISE 6.1                                                   %
@@ -377,11 +381,13 @@ for i=1:length(desc_train)
         
         visword = desc_train(i).visword;    
         h = histc(visword, 1:size(VC, 1))';
+        clear visword;
         
     elseif do_soft_feat_quantization_KCB
         
         kernel_codebook = sum(desc_train(i).quantdist, 1)/size(desc_train(i).quantdist, 1);
         h = kernel_codebook;
+        clear kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
         
@@ -392,14 +398,20 @@ for i=1:length(desc_train)
         end
         h = codeword_uncertainty;
         
+        clear codeword_uncertainty;
     end
+    
     %%%%% End of EXERCIZE 6.1 %%%%%%
+    
+    %Clear quantdist train
+    desc_train(i).quantdist = [];
     
     % normalize bow-hist (L1 norm)
     h = h ./ norm(h, 1);
     
     % save histograms
     desc_train(i).bof = h;
+    clear h;
 end
 
 for i=1:length(desc_test) 
@@ -409,12 +421,12 @@ for i=1:length(desc_test)
         
         visword = desc_test(i).visword;    
         h = histc(visword, 1:size(VC, 1))';
-        
+        clear visword;
     elseif do_soft_feat_quantization_KCB
         
         kernel_codebook = sum(desc_test(i).quantdist, 1)/size(desc_test(i).quantdist, 1);
         h = kernel_codebook;
-        
+        clear kernel_codebook;
     elseif do_soft_feat_quantization_UNC
         
         den = sum(desc_test(i).quantdist, 2);
@@ -423,15 +435,19 @@ for i=1:length(desc_test)
             codeword_uncertainty(j) = sum(arg)/size(desc_test(i).quantdist, 1);            
         end
         h = codeword_uncertainty;
-        
+        clear codeword_uncertainty;
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
+    
+    %Clear quantdist test
+    desc_test(i).quantdist = [];
     
     % normalize bow-hist (L1 norm)
     h = h ./ norm(h, 1);
     
     % save histograms
     desc_test(i).bof = h;
+    clear h;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -455,7 +471,6 @@ end
 %%%%end LLC coding
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Part 3: image classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,6 +479,7 @@ end
 % Concatenate bof-histograms into training and test matrices 
 bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
+
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
@@ -473,6 +489,7 @@ end
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
 
+clear desc_train;
 
 %% NN classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -760,7 +777,7 @@ if do_svm_chi2_classification
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
     disp('*** SVM - Chi2 kernel ***');
-    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    [precomp_chi2_svm_lab, ~]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     
     method_name='SVM Chi2';
     % Compute classification accuracy

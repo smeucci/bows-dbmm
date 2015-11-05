@@ -10,8 +10,8 @@ function dmatk = kNearestNeighbours(dmat, K)
     dk = dmat_sort(:,K);
 
     % Threshold
-    res = double(bsxfun(@lt, dmat, dk));
-    res(find(res==0)) = Inf;
+    res = double(bsxfun(@le, dmat, dk));
+    res(res==0) = Inf;
     
     dmatk = res.*dmat;
     
