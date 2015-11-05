@@ -1,0 +1,38 @@
+Article
+
+******** Introduction ********
+
+- Introduzione BoW model
+- Obiettivo: classificazione di immagini, utilizzando vari classificatori e variando i kernel
+- Soft assignment and truncated assignment
+- Step di esecuzione
+
+******* Feature extraction ********
+
+- Descrizione SIFT e proprietà
+
+******** Image representation ********
+
+- Vocabulary creation (kmeans)
+- Quantization (hard/soft assignment)
+- Kernel codebook/Uncertainty and truncated
+- BoW creation (hard/soft differences)
+
+******** Image classification ********
+
+- NN and SVM
+- Kernels
+
+******** Experimental results ********
+
+- Dataset description
+- PC stats
+- libsvm as library
+
+- 10/30/50 trainset images accuracies over all SVMs and NNs
+- codebook table 
+- dense/sparse/multiscale SIFT
+
+- hard/soft assignment comparison
+
+- Conclusions
