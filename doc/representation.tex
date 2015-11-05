@@ -1,1 +1,8 @@
 \section{Image representation}
+
+To quantize local descriptors into visual words, we must first generate visual vocabulary. Like document
+in text retrieval, each image in the “corpus” is represented as a sparse vector of “term” (visual
+word) occurrences through local descriptor quantization, and search then proceeds by calculating
+the similarity between the query vector and each “document” vector. Different from text retrieval
+where text words are sampled naturally according to language context, visual words are artificially
+generated which has less semantic sense.\cite{DBLP:journals/corr/abs-1304-5168}
