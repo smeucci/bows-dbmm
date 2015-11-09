@@ -1,1 +1,15 @@
 \section{Feature extraction}
+
+which describes the features employed and their properties.
+
+- features globali non precise per la classificazione
+- uso features locali; come le estraggo?
+- sparse, uso un keypoints detector come harris laplace
+- dense, prendo keypoints uniformi sull'immagine
+- Multi-Scale Dense Sampling, prendo keypoints densi a scale diverse dell'immagine.
+- estratti i keypoints uso sift descriptor per descrivere ogni features locale dell'immagine
+- perchè sift? proprietà di invarianza, cosa prendono in considerazione di un'immagine.
+
+- per ogni immagine estraggo i keypoint; posso farlo in modo sparso, ovvero uso un keypoints detection, oppure in modo denso, ovvero prendo i keypoints uniformemente distribuiti nell'immagini. Terza opzione è multiscale sparse etc.
+- dopo aver estratto i keypoints uso SIFT descriptor per descrivere ogni local features di un'immagine.
+- breve descrizione sift, proprietà di invarianza ecc.

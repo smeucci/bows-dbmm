@@ -477,8 +477,8 @@ end
 
 
 % Concatenate bof-histograms into training and test matrices 
-bof_train=cat(1,desc_train.bof);
-bof_test=cat(1,desc_test.bof);
+bof_train=double(cat(1,desc_train.bof));
+bof_test=double(cat(1,desc_test.bof));
 
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
