@@ -66,4 +66,12 @@ $$UNC(v) = \frac{1}{n} \sum_{i = 1}^{n} \frac{K_{\sigma}(D(v, r_i))}{\sum_{j=1}^
 
 \paragraph{Localized soft assignment}
 
-In the \emph{localized soft assignment} approach, as proposed in an \emph{early cut-off} effect is produced, which removes the adverse impact of unreliable longer distances
+The \emph{localized soft assignment} approach is proposed in \cite{LingqiaoLiu:2011:DSC:2355573.2356438}. Instead of evaluate each distance between the local feature and all the visual words we define, for each local feature $x_i$
+$$\hat{d}(x_i, \omega_j) =
+\left\{
+\begin{array}{ll}
+d(x_i, \omega_j) & \mbox{if } \omega_j \in \mathcal{N}_k(x_i) \\
+\infty & \mbox{otherwise}
+\end{array}
+\right.$$
+where $\mathcal{N}_k$ is the set of the $k$ nearest visual words at $x_i$.
