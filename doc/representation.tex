@@ -45,7 +45,14 @@ Codeword plausibility denotes the problem of selecting a codeword without a suit
 
 Figure \ref{fig:softAssignment} illustrates both these problems. The small dots represent image features, the labeled red circles are the visual words. The yellow triangle represents a data sample that is well suited to the hard assignment approach. The difficulty with codeword uncertainty is shown by the square, and the problem of codeword plausibility is illustrated by the diamond.
 
+\emph{Soft assignment} coding is proposed to alleviate those drawbacks by assigning a local feature to all visual words. The coding coefficient represents the membership of a local feature to different visual words.
 
+\paragraph{Kernel Codebook}
 
+In Kernel Codebook approach we apply techniques from kernel density estimation to allow a degree of ambiguity in assigning codewords to image features. 
 
+For each word $\omega$ in the vocabulary we evaluate
+$$KCB(\omega) = \frac{1}{n} \sum_{i = 1}^{n} K_{\sigma}(D(\omega, r_i))$$
+where $n$ is the number of regions, $r_i$ is the image region $i$ and $K_{\sigma}$ is the kernel function defined as
+$$K_{\sigma} (x) = \frac{1}{\sqrt{2\pi} \sigma} e^{- \frac{1}{2} \frac{x^2}{\sigma^2}}$$
 
