@@ -78,7 +78,7 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 50;
+num_train_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 50;
 % number of codewords (i.e. K for the k-means algorithm)
