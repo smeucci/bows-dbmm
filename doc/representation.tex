@@ -21,9 +21,31 @@ A simple way to assign a descriptor to a visual word is to search for nearest ne
 
 Let $V = \{\omega_1, \ldots, \omega_n \}$ be the vocabulary, where $\omega_i \in \mathbb{R}^{d}$ (with $d$ the SIFT descriptor vector size, 128) and $n$ is the vocabulary size.
 
-In \emph{hard assignment}, given and image with $X = \{x_1, ..., \x_p\}$ extracted local features, each local feature $x_i \in \mathbb{R}^{d}$ is assigned to one and only one codeword of the vocabulary. The assigned codeword index, $u_i$, is obtained with
+In \emph{hard assignment}, given and image with $X = \{x_1, ..., x_p\}$ extracted local features, each local feature $x_i \in \mathbb{R}^{d}$ is assigned to one and only one codeword of the vocabulary. The assigned codeword index, $u_i$, is obtained with
 
 $$u_i = arg \min_{j = 1, \ldots, n} ||x_i - \omega_j||$$
 
-As result we obtain an index vector that associate each local feature with its closest codeword of the vocabulary.
+As result we obtain an index vector that associate each local feature with its closest codeword index of the vocabulary.
+
+\subsubsection{Soft assignment}
+
+The \emph{hard assignment} method does not consider codeword ambiguity and often introduces large quantization error. Those two issue are known as \emph{codeword uncertainty} and \emph{codeword plausibility}. 
+
+Codeword uncertainty refers to the problem of selecting the correct codeword out of two or more relevant candidates. The \emph{hard assignment} approach merely selects the best representing codeword, ignoring the relevance of other candidates. 
+
+Codeword plausibility denotes the problem of selecting a codeword without a suitable candidate in the vocabulary. The \emph{hard assignment} approach assigns the best fitting codeword, regardless the fact that this codeword is not a proper representative. 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.35\textwidth]{images/soft-assignment.jpg}
+\end{center}
+  \caption{\emph{Codeword uncertainty} and \emph{codeword plausibility}}
+\label{fig:softAssignment}
+\end{figure}
+
+Figure \ref{fig:softAssignment} illustrates both these problems. The small dots represent image features, the labeled red circles are the visual words. The yellow triangle represents a data sample that is well suited to the hard assignment approach. The difficulty with codeword uncertainty is shown by the square, and the problem of codeword plausibility is illustrated by the diamond.
+
+
+
+
 
