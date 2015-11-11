@@ -35,8 +35,8 @@ dataset_dir = '15_ObjectCategories';
 % descriptors computed at a grid of overlapped patches
 
 %desc_name = 'sift';
-desc_name = 'dsift';
-%desc_name = 'msdsift';
+%desc_name = 'dsift';
+desc_name = 'msdsift';
 
 
 % FLAGS
@@ -44,18 +44,18 @@ do_feat_extraction = 0;
 do_split_sets = 1;
 
 do_form_codebook = 1;
-do_hard_feat_quantization = 0;
+do_hard_feat_quantization = 1;
 
 gaussian_kernel_sigma = 100;
 do_soft_feat_quantization_KCB = 0;
-do_soft_feat_quantization_UNC = 1;
-do_truncated_soft_assignment = 1;
+do_soft_feat_quantization_UNC = 0;
+do_truncated_soft_assignment = 0;
 
 do_L2_NN_classification = 1;
 do_chi2_NN_classification = 1;
 do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
+do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 do_svm_rbf_classification = 1;
@@ -80,7 +80,7 @@ norm_bof_hist = 1;
 % number of images selected for training (e.g. 30 for Caltech-101)
 num_train_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 50;
+num_test_img = 30;
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 
