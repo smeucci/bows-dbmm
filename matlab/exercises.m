@@ -46,13 +46,13 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_hard_feat_quantization = 0;
 
-gaussian_kernel_sigma = 100;
-do_soft_feat_quantization_KCB = 1;
-do_soft_feat_quantization_UNC = 0;
-do_truncated_soft_assignment = 0;
+gaussian_kernel_sigma = 95;
+do_soft_feat_quantization_KCB = 0;
+do_soft_feat_quantization_UNC = 1;
+do_truncated_soft_assignment = 1;
 
 do_L2_NN_classification = 0;
-do_chi2_NN_classification = 1;
+do_chi2_NN_classification = 0;
 do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
@@ -390,13 +390,23 @@ for i=1:length(desc_train)
         clear kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
-        
+        %{
         den = sum(desc_train(i).quantdist, 2);
         for j=1:size(VC, 1)
             arg = desc_train(i).quantdist(:,j)./den;
             codeword_uncertainty(j) = sum(arg)/size(desc_train(i).quantdist, 1);
         end
         h = codeword_uncertainty;
+        
+        clear codeword_uncertainty;
+        
+        for h = 1:size(desc_train(i).quantdist, 1)
+            codeword_uncertainty(h,:) = desc_train(i).quantdist(h,:)/sum(desc_train(i).quantdist(h,:), 2);           
+        end
+        %}
+        codeword_uncertainty = bsxfun(@rdivide, desc_train(i).quantdist, sum(desc_train(i).quantdist, 2));
+        
+        h = sum(codeword_uncertainty, 1)/size(desc_train(i).quantdist, 1);
         
         clear codeword_uncertainty;
     end
@@ -423,18 +433,29 @@ for i=1:length(desc_test)
         h = histc(visword, 1:size(VC, 1))';
         clear visword;
     elseif do_soft_feat_quantization_KCB
-        
+                
         kernel_codebook = sum(desc_test(i).quantdist, 1)/size(desc_test(i).quantdist, 1);
         h = kernel_codebook;
         clear kernel_codebook;
     elseif do_soft_feat_quantization_UNC
-        
+        %{
         den = sum(desc_test(i).quantdist, 2);
         for j=1:size(VC, 1)
             arg = desc_test(i).quantdist(:,j)./den;
             codeword_uncertainty(j) = sum(arg)/size(desc_test(i).quantdist, 1);            
         end
         h = codeword_uncertainty;
+        clear codeword_uncertainty;
+        
+        
+        for h = 1:size(desc_test(i).quantdist, 1)
+            codeword_uncertainty(h,:) = desc_test(i).quantdist(h,:)./sum(desc_test(i).quantdist(h,:), 2);           
+        end
+        %}
+        codeword_uncertainty = bsxfun(@rdivide, desc_test(i).quantdist, sum(desc_test(i).quantdist, 2));
+        
+        h = sum(codeword_uncertainty, 1)/size(desc_test(i).quantdist, 1);
+        
         clear codeword_uncertainty;
     end
     %%%%% End of EXERCIZE 6.1 %%%%%%
@@ -477,8 +498,8 @@ end
 
 
 % Concatenate bof-histograms into training and test matrices 
-bof_train=double(cat(1,desc_train.bof));
-bof_test=double(cat(1,desc_test.bof));
+bof_train=(cat(1,desc_train.bof));
+bof_test=(cat(1,desc_test.bof));
 
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
