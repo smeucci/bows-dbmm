@@ -46,7 +46,9 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_hard_feat_quantization = 0;
 
+
 gaussian_kernel_sigma = 45;
+do_soft_feat_sigma_crossval = 0;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
 do_truncated_soft_assignment = 0;
@@ -209,7 +211,10 @@ if do_form_codebook
 
     [VC] = kmeans_bo(double(DESC),K,max_km_iters);%visual codebook
     VC = VC';%transpose for compatibility with following functions
+    save('./mat/vocabulary.mat', 'VC');
     clear DESC;
+else
+    load('./mat/vocabulary.mat');
 end
 
 
@@ -262,6 +267,16 @@ end
 %   End of EXERCISE 1                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Crossvalidate Sigma for soft assignment
+
+if (do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC)...
+        && (do_soft_feat_sigma_crossval)
+    
+    gaussian_kernel_sigma = crossvalidateSigma(desc_train, desc_test, VC, 48, 65, 1)
+
+end
+
+%% Soft assignment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %   EXERCISE 6.1: Feature quantization using soft-assignment              %
@@ -385,7 +400,7 @@ for i=1:length(desc_train)
         
     elseif do_soft_feat_quantization_KCB
         
-        kernel_codebook = sum(desc_train(i).quantdist, 1)/size(desc_train(i).quantdist, 1);
+        kernel_codebook = sum(desc_train(i).quantdist, 1);
         h = kernel_codebook;
         clear kernel_codebook;
         
@@ -434,7 +449,7 @@ for i=1:length(desc_test)
         clear visword;
     elseif do_soft_feat_quantization_KCB
                 
-        kernel_codebook = sum(desc_test(i).quantdist, 1)/size(desc_test(i).quantdist, 1);
+        kernel_codebook = sum(desc_test(i).quantdist, 1);
         h = kernel_codebook;
         clear kernel_codebook;
     elseif do_soft_feat_quantization_UNC
