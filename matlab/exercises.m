@@ -46,10 +46,10 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_hard_feat_quantization = 0;
 
-gaussian_kernel_sigma = 95;
+gaussian_kernel_sigma = 45;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
-do_truncated_soft_assignment = 1;
+do_truncated_soft_assignment = 0;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;

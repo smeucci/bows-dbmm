@@ -7,7 +7,9 @@ function s = crossvalidateSigma(train, test, VC)
 
           
           gaussian_kernel = gaussianKernel(dmat, sigma);
-          h = bsxfun(@times, gaussian_kernel, 1 ./ max(sum(gaussian_kernel, 1), eps)); 
+          unc = bsxfun(@rdivide, gaussian_kernel, sum(gaussian_kernel, 2));
+          h = sum(unc, 1)/size(gaussian_kernel, 1);
+          h = h./norm(h, 1);
           train(i).bof = h;
           clear h;
         end
@@ -15,8 +17,11 @@ function s = crossvalidateSigma(train, test, VC)
         for i=1:length(test)    
           dmat = eucliddist(test(i).sift, VC);
           gaussian_kernel = gaussianKernel(dmat, sigma);
-          h = bsxfun(@times, gaussian_kernel, 1 ./ max(sum(gaussian_kernel, 1), eps)); 
+          unc = bsxfun(@rdivide, gaussian_kernel, sum(gaussian_kernel, 2));
+          h = sum(unc, 1)/size(gaussian_kernel, 1);
+          h = h./norm(h, 1);
           test(i).bof = h;
+          clear h;
         end
         
         bof_train=(cat(1,train.bof));
