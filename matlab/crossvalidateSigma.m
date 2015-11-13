@@ -3,7 +3,7 @@ function bestSigma = crossvalidateSigma(train, test, VC, minValue, maxValue, ste
     bestSigma = 0;
     bestAccuracy = 0;
     
-    fprintf('\nSoft assignment signa crossvalidation\n');
+    fprintf('\nSoft assignment sigma crossvalidation\n');
     
     for sigma = minValue:step:maxValue
         for i=1:length(train)  
