@@ -1,0 +1,69 @@
+EXPERIMENT:
+- dataset caltech-15
+- 30 train
+- 30 test
+- 500 vocabulary size
+- 45 value of sigma
+- fixed train set, test set and vocabulary
+- comparison between uncertainty and hard
+
+#######################################################################################
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+
+*** NN L2 ***
+Accuracy = 54.0000% (classification)
+OVERALL NN L2 classification accuracy: 0.5400
+
+*** NN Chi-2 ***
+Accuracy = 66.8889% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6689
+
+*** SVM - linear ***
+Accuracy = 73.5556% (331/450) (classification)
+OVERALL SVM linear classification accuracy: 0.7356
+
+*** SVM - intersection kernel ***
+Accuracy = 81.5556% (367/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8156
+
+*** SVM - Chi2 kernel ***
+Accuracy = 81.1111% (365/450) (classification)
+OVERALL SVM Chi2 classification accuracy: 0.8111
+
+*** SVM - RBF Gaussian kernel ***
+Accuracy = 71.1111% (320/450) (classification)
+OVERALL SVM RBF Gaussian classification accuracy: 0.7111
+
+>> 
+
+#######################################################################################
+
+Feature quantization (hard-assignment)...
+
+*** NN L2 ***
+Accuracy = 50.6667% (classification)
+OVERALL NN L2 classification accuracy: 0.5067
+
+*** NN Chi-2 ***
+Accuracy = 66.6667% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6667
+
+*** SVM - linear ***
+Accuracy = 69.3333% (312/450) (classification)
+OVERALL SVM linear classification accuracy: 0.6933
+
+*** SVM - intersection kernel ***
+Accuracy = 80.6667% (363/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8067
+
+*** SVM - Chi2 kernel ***
+Accuracy = 79.3333% (357/450) (classification)
+OVERALL SVM Chi2 classification accuracy: 0.7933
+
+*** SVM - RBF Gaussian kernel ***
+Accuracy = 69.1111% (311/450) (classification)
+OVERALL SVM RBF Gaussian classification accuracy: 0.6911
+
+>> 
+

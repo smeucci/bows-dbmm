@@ -24,8 +24,8 @@ function s = crossvalidateSigma(train, test, VC)
           clear h;
         end
         
-        bof_train=(cat(1,train.bof));
-        bof_test=(cat(1,test.bof));
+        bof_train=double(cat(1,train.bof));
+        bof_test=double(cat(1,test.bof));
         labels_train=cat(1,train.class);
         labels_test=cat(1,test.class);
         

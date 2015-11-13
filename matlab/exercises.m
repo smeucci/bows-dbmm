@@ -60,6 +60,15 @@ do_svm_inter_classification = 1;
 do_svm_chi2_classification = 0;
 do_svm_rbf_classification = 0;
 
+% FOR EXPERIMENTS: to save and/or load the vocabulary
+do_load_from_data = 1; % if it's set to 1 but there is not file, it will compute a new vocabulary
+do_save_to_data = 1;
+% SET do_split_sets TO 0, to load the variable 'data' from a previous execution, resulting in a fixed
+% training and testing set.
+if do_load_from_data
+    do_split_sets = 0; % will load 'data' from the dataset directory
+end
+
 visualize_feat = 0;
 visualize_words = 0;
 visualize_confmat = 0;
@@ -92,6 +101,7 @@ file_ext='jpg';
 
 % Create a new dataset split
 file_split = 'split.mat';
+
 if do_split_sets    
     data = create_dataset_split_structure(fullfile(basepath, 'img', ...
         dataset_dir),num_train_img,num_test_img ,file_ext);
@@ -122,6 +132,7 @@ end
 %  desc(i).rad :  Nx1 array with radius for N SIFT features
 %  desc(i).sift : Nx128 array with N SIFT descriptors
 %  desc(i).imgfname : file name of original image
+
 
 lasti=1;
 for i = 1:length(data)
@@ -177,41 +188,47 @@ end;
 
 %% Build visual vocabulary using k-means %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if do_form_codebook
-    fprintf('\nBuild visual vocabulary:\n');
+if do_load_from_data && exist(fullfile(basepath,'img',dataset_dir,'VC.mat'), 'file');
+    load(fullfile(basepath,'img',dataset_dir,'VC.mat'));
+else
+    if do_form_codebook
+        fprintf('\nBuild visual vocabulary:\n');
 
-    % concatenate all descriptors from all images into a n x d matrix 
-    DESC = [];
-    labels_train = cat(1,desc_train.class);
-    for i=1:length(data)
-        desc_class = desc_train(labels_train==i);
-        randimages = randperm(num_train_img);
-        randimages=randimages(1:5);
-        DESC = vertcat(DESC,desc_class(randimages).sift);
+        % concatenate all descriptors from all images into a n x d matrix 
+        DESC = [];
+        labels_train = cat(1,desc_train.class);
+        for i=1:length(data)
+            desc_class = desc_train(labels_train==i);
+            randimages = randperm(num_train_img);
+            randimages=randimages(1:5);
+            DESC = vertcat(DESC,desc_class(randimages).sift);
+        end
+
+        % sample random M (e.g. M=20,000) descriptors from all training descriptors
+        r = randperm(size(DESC,1));
+        r = r(1:min(length(r),nfeat_codebook));
+
+        DESC = DESC(r,:);
+
+        % run k-means
+        K = nwords_codebook; % size of visual vocabulary
+        fprintf('running k-means clustering of %d points into %d clusters...\n',...
+            size(DESC,1),K)
+        % input matrix needs to be transposed as the k-means function expects 
+        % one point per column rather than per row
+
+        % form options structure for clustering
+        cluster_options.maxiters = max_km_iters;
+        cluster_options.verbose  = 1;
+
+        [VC] = kmeans_bo(double(DESC),K,max_km_iters);%visual codebook
+        VC = VC';%transpose for compatibility with following functions
+        clear DESC;
     end
-
-    % sample random M (e.g. M=20,000) descriptors from all training descriptors
-    r = randperm(size(DESC,1));
-    r = r(1:min(length(r),nfeat_codebook));
-
-    DESC = DESC(r,:);
-
-    % run k-means
-    K = nwords_codebook; % size of visual vocabulary
-    fprintf('running k-means clustering of %d points into %d clusters...\n',...
-        size(DESC,1),K)
-    % input matrix needs to be transposed as the k-means function expects 
-    % one point per column rather than per row
-
-    % form options structure for clustering
-    cluster_options.maxiters = max_km_iters;
-    cluster_options.verbose  = 1;
-
-    [VC] = kmeans_bo(double(DESC),K,max_km_iters);%visual codebook
-    VC = VC';%transpose for compatibility with following functions
-    clear DESC;
+    if do_save_to_data
+        save(fullfile(basepath,'img',dataset_dir,'VC.mat'), 'VC');
+    end
 end
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,7 +290,10 @@ if do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC
         fprintf('\nFeature quantization (soft-assignment with Kernel Codebook)...\n');
     elseif do_soft_feat_quantization_UNC
         fprintf('\nFeature quantization (soft-assignment with Codeword Uncertainty)...\n');
-    end 
+    end
+    if do_truncated_soft_assignment
+        fprintf('Using truncated soft-assigment\n');
+    end
     for i=1:length(desc_train)  
       dmat = eucliddist(desc_train(i).sift, VC);
       [~, hard_visword] = min(dmat, [], 2);
@@ -390,20 +410,7 @@ for i=1:length(desc_train)
         clear kernel_codebook;
         
     elseif do_soft_feat_quantization_UNC
-        %{
-        den = sum(desc_train(i).quantdist, 2);
-        for j=1:size(VC, 1)
-            arg = desc_train(i).quantdist(:,j)./den;
-            codeword_uncertainty(j) = sum(arg)/size(desc_train(i).quantdist, 1);
-        end
-        h = codeword_uncertainty;
         
-        clear codeword_uncertainty;
-        
-        for h = 1:size(desc_train(i).quantdist, 1)
-            codeword_uncertainty(h,:) = desc_train(i).quantdist(h,:)/sum(desc_train(i).quantdist(h,:), 2);           
-        end
-        %}
         codeword_uncertainty = bsxfun(@rdivide, desc_train(i).quantdist, sum(desc_train(i).quantdist, 2));
         
         h = sum(codeword_uncertainty, 1)/size(desc_train(i).quantdist, 1);
@@ -438,20 +445,7 @@ for i=1:length(desc_test)
         h = kernel_codebook;
         clear kernel_codebook;
     elseif do_soft_feat_quantization_UNC
-        %{
-        den = sum(desc_test(i).quantdist, 2);
-        for j=1:size(VC, 1)
-            arg = desc_test(i).quantdist(:,j)./den;
-            codeword_uncertainty(j) = sum(arg)/size(desc_test(i).quantdist, 1);            
-        end
-        h = codeword_uncertainty;
-        clear codeword_uncertainty;
-        
-        
-        for h = 1:size(desc_test(i).quantdist, 1)
-            codeword_uncertainty(h,:) = desc_test(i).quantdist(h,:)./sum(desc_test(i).quantdist(h,:), 2);           
-        end
-        %}
+       
         codeword_uncertainty = bsxfun(@rdivide, desc_test(i).quantdist, sum(desc_test(i).quantdist, 2));
         
         h = sum(codeword_uncertainty, 1)/size(desc_test(i).quantdist, 1);
@@ -498,8 +492,8 @@ end
 
 
 % Concatenate bof-histograms into training and test matrices 
-bof_train=(cat(1,desc_train.bof));
-bof_test=(cat(1,desc_test.bof));
+bof_train=double(cat(1,desc_train.bof));
+bof_test=double(cat(1,desc_test.bof));
 
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
