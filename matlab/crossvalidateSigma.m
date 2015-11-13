@@ -1,11 +1,13 @@
-function s = crossvalidateSigma(train, test, VC)
+function bestSigma = crossvalidateSigma(train, test, VC, minValue, maxValue, step)
 
-    for sigma = 50:20:500
+    bestSigma = 0;
+    bestAccuracy = 0;
+    
+    fprintf('\nSoft assignment signa crossvalidation\n');
+    
+    for sigma = minValue:step:maxValue
         for i=1:length(train)  
           dmat = eucliddist(train(i).sift, VC);
-          
-
-          
           gaussian_kernel = gaussianKernel(dmat, sigma);
           unc = bsxfun(@rdivide, gaussian_kernel, sum(gaussian_kernel, 2));
           h = sum(unc, 1)/size(gaussian_kernel, 1);
@@ -47,7 +49,7 @@ function s = crossvalidateSigma(train, test, VC)
             end
 
             % cross-validation only the first time
-            if sigma == 50
+            if sigma == minValue
                 C_vals=log2space(3,10,5);
                 for i=1:length(C_vals);
                     opt_string=['-t 4  -v 5 -c ' num2str(C_vals(i))];
@@ -56,18 +58,15 @@ function s = crossvalidateSigma(train, test, VC)
                 [v,ind]=max(xval_acc);
             end
 
-            % train the model and test
             model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
-            % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... consider this if the kernel is computationally inefficient.
             fprintf('Sigma: %i\n', sigma);
-            [precomp_ik_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-
-
-        
+            [~, acc, ~]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+            
+            if acc(1) > bestAccuracy
+               bestAccuracy = acc(1);
+               bestSigma = sigma;
+            end
     end
-
-
-
 
 end
 
