@@ -46,9 +46,8 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_hard_feat_quantization = 0;
 
-
 gaussian_kernel_sigma = 45;
-do_soft_feat_sigma_crossval = 0;
+do_soft_feat_sigma_crossval = 1;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
 do_truncated_soft_assignment = 0;
@@ -223,22 +222,14 @@ else
         cluster_options.maxiters = max_km_iters;
         cluster_options.verbose  = 1;
 
-<<<<<<< HEAD
         [VC] = kmeans_bo(double(DESC),K,max_km_iters);%visual codebook
         VC = VC';%transpose for compatibility with following functions
         clear DESC;
+        
+        if do_save_to_data
+            save(fullfile(basepath,'img',dataset_dir,'VC.mat'), 'VC');
+        end
     end
-    if do_save_to_data
-        save(fullfile(basepath,'img',dataset_dir,'VC.mat'), 'VC');
-    end
-=======
-    [VC] = kmeans_bo(double(DESC),K,max_km_iters);%visual codebook
-    VC = VC';%transpose for compatibility with following functions
-    save('./mat/vocabulary.mat', 'VC');
-    clear DESC;
-else
-    load('./mat/vocabulary.mat');
->>>>>>> 3869828f302aa527ebd3363f55f14064a2039a3e
 end
 
 
@@ -426,7 +417,7 @@ for i=1:length(desc_train)
         
     elseif do_soft_feat_quantization_KCB
         
-        kernel_codebook = sum(desc_train(i).quantdist, 1);
+        kernel_codebook = sum(desc_train(i).quantdist, 1)/size(desc_train(i).quantdist, 1);
         h = kernel_codebook;
         clear kernel_codebook;
         
@@ -462,9 +453,10 @@ for i=1:length(desc_test)
         clear visword;
     elseif do_soft_feat_quantization_KCB
                 
-        kernel_codebook = sum(desc_test(i).quantdist, 1);
+        kernel_codebook = sum(desc_test(i).quantdist, 1)/size(desc_test(i).quantdist, 1);
         h = kernel_codebook;
         clear kernel_codebook;
+        
     elseif do_soft_feat_quantization_UNC
        
         codeword_uncertainty = bsxfun(@rdivide, desc_test(i).quantdist, sum(desc_test(i).quantdist, 2));
