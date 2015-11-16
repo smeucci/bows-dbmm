@@ -35,4 +35,33 @@ In Figure \ref{fig:vocabulary} it is shown the classification accuracies variati
 \label{fig:vocabulary}
 \end{figure}
 
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & \emph{sift} & \emph{dsift} & \emph{msift}\\
+\hline\hline
+NN $L_2$ & 44 & 49,78 & 52,22\\
+NN $\chi^2$ & 57,78 & 68,89 & 68,67\\
+SVM Linear & 69,33 & 73,33 & 74,22\\
+SVM IK & 77,56 & 81,56 & 81,78\\
+SVM $\chi^2$ & 78 & 80 & 82\\
+SVM RBF & 71,56 & 71,78 & 71,89 \\
+\hline
+\end{tabular}
+\end{center}
+\label{tab:sifttype}
+\caption{Classification accuracies on varying SIFT type}
+\end{table}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{images/soft-comparison.png}
+\end{center}
+  \caption{Comparison between hard and soft assignment}
+\label{fig:vocabulary}
+\end{figure}
+
+
+
 
