@@ -1,0 +1,150 @@
+TEST 1
+
+######## hard
+
+Feature quantization (hard-assignment)...
+*** NN Chi-2 ***
+Accuracy = 67.5556% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6756
+
+*** SVM - intersection kernel ***
+Accuracy = 79.7778% (359/450) (classification)
+OVERALL SVM IK classification accuracy: 0.7978
+
+######## unc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+*** NN Chi-2 ***
+Accuracy = 68.4444% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6844
+
+*** SVM - intersection kernel ***
+Accuracy = 80.4444% (362/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8044
+
+######## trunc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+Using truncated soft-assigment
+*** NN Chi-2 ***
+Accuracy = 68.4444% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6844
+
+*** SVM - intersection kernel ***
+Accuracy = 80.6667% (363/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8067
+
+
+TEST 2
+
+######## hard
+
+Feature quantization (hard-assignment)...
+*** NN Chi-2 ***
+Accuracy = 65.5556% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6556
+
+*** SVM - intersection kernel ***
+Accuracy = 78.2222% (352/450) (classification)
+OVERALL SVM IK classification accuracy: 0.7822
+
+####### unc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+*** NN Chi-2 ***
+Accuracy = 66.8889% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6689
+
+*** SVM - intersection kernel ***
+Accuracy = 78% (351/450) (classification)
+OVERALL SVM IK classification accuracy: 0.7800
+
+####### trunc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+Using truncated soft-assigment
+*** NN Chi-2 ***
+Accuracy = 66.0000% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6600
+
+*** SVM - intersection kernel ***
+Accuracy = 78.4444% (353/450) (classification)
+OVERALL SVM IK classification accuracy: 0.7844
+
+TEST 3
+
+###### hard
+
+Feature quantization (hard-assignment)...
+*** NN Chi-2 ***
+Accuracy = 67.7778% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6778
+
+*** SVM - intersection kernel ***
+Accuracy = 81.1111% (365/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8111
+
+###### unc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+*** NN Chi-2 ***
+Accuracy = 69.1111% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6911
+
+*** SVM - intersection kernel ***
+Accuracy = 81.3333% (366/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8133
+
+###### trunc
+
+Feature quantization (soft-assignment with Codeword Uncertainty)...
+Using truncated soft-assigment
+*** NN Chi-2 ***
+Accuracy = 68.0000% (classification)
+OVERALL NN Chi-2 classification accuracy: 0.6800
+
+*** SVM - intersection kernel ***
+Accuracy = 81.7778% (368/450) (classification)
+OVERALL SVM IK classification accuracy: 0.8178
+
+
+AVERAGE
+
+### hard
+
+- nn-chi2: 67.67
+- ik-svm: 80.44
+
+### unc - sigma 45
+
+-nn-chi2: 68.78
+-ik-svm: 80.89
+
+### trunc unc -sigma 45
+
+-nn-chi2: 68.22
+-ik-svm: 81.23
+
+### kcb - sigma 130
+
+-nn-chi2: 
+-ik-svm: 
+
+### trunc kcb - sigma 130
+
+-nn-chi2: 
+-ik-svm: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

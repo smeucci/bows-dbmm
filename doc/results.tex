@@ -10,7 +10,7 @@ In Table \ref{tab:trainsetsize} the classification accuracy on varying training 
 \begin{center}
 \begin{tabular}{|l|c|c|c|}
 \hline
- & 10 & 30 & 50\\
+Classifier & 10 & 30 & 50\\
 \hline\hline
 NN $L_2$ & 38,44 & 53,33 & 52,06\\
 NN $\chi^2$ & 59,67 & 67,33 & 67,74\\
@@ -22,7 +22,7 @@ SVM RBF & 57,56 & 71,78 & 72,31 \\
 \end{tabular}
 \end{center}
 \label{tab:trainsetsize}
-\caption{Classification accuracies on varying training set size}
+\caption{Classification accuracy (\%) on varying training set size}
 \end{table}
 
 In Figure \ref{fig:vocabulary} it is shown the classification accuracy variation on growing the vocabulary size. All tests have been made fixing training set size to 30 and using \emph{dense SIFT}. Generally the greater the number of codewords used the greater the accuracy obtained. We attribute this performance boost to the ability of the vocabulary to be more expressive, leading to a more discriminant representation of each image.
@@ -31,7 +31,7 @@ In Figure \ref{fig:vocabulary} it is shown the classification accuracy variation
 \begin{center}
 \includegraphics[width=0.45\textwidth]{images/vocabulary.png}
 \end{center}
-  \caption{Classification accuracies on growing vocabulary size}
+  \caption{Classification accuracy (\%) on growing vocabulary size}
 \label{fig:vocabulary}
 \end{figure}
 
@@ -41,7 +41,7 @@ In Table \ref{tab:sifttype} it is shown the classification accuracy variation on
 \begin{center}
 \begin{tabular}{|l|c|c|c|}
 \hline
- & \emph{sift} & \emph{dsift} & \emph{msift}\\
+Classifier & \emph{sSIFT} & \emph{dSIFT} & \emph{msdSIFT}\\
 \hline\hline
 NN $L_2$ & 44 & 49,78 & 52,22\\
 NN $\chi^2$ & 57,78 & 68,89 & 68,67\\
@@ -53,7 +53,7 @@ SVM RBF & 71,56 & 71,78 & 71,89 \\
 \end{tabular}
 \end{center}
 \label{tab:sifttype}
-\caption{Classification accuracies on varying SIFT type}
+\caption{Classification accuracy (\%) on varying SIFT type}
 \end{table}
 
 
