@@ -19,13 +19,17 @@ visual words. To assign a descriptor to visual word(s) there are two way to proc
 
 A simple way to assign a descriptor to a visual word is to search for nearest neighbors among the vocabulary.
 
-Let $V = \{\omega_1, \ldots, \omega_n \}$ be the vocabulary, where $\omega_i \in \mathbb{R}^{d}$ (with $d$ the SIFT descriptor vector size, 128) and $n$ is the vocabulary size.
+Let $V = \{\omega_1, \ldots, \omega_p \}$ be the vocabulary, where $\omega_i \in \mathbb{R}^{d}$ (with $d$ the SIFT descriptor vector size, 128) and $n$ is the vocabulary size.
 
-In \emph{hard assignment}, given and image with $X = \{x_1, \ldots, x_p\}$ extracted local features, each local feature $x_i \in \mathbb{R}^{d}$ is assigned to one and only one codeword of the vocabulary. The assigned codeword index, $u_i$, is obtained with
+In \emph{hard assignment}, given and image with $X = \{x_1, \ldots, x_n\}$ extracted local features, each local feature $x_i \in \mathbb{R}^{d}$ is assigned to one and only one codeword of the vocabulary. For each $\omega \in V$:
 \begin{equation}
-u_i = arg \min_{j = 1, \ldots, n} ||x_i - \omega_j||
+CB(\omega) = \frac{1}{n} \sum_{i = 1}^{n} \left\{
+\begin{array}{rl}
+1 & \mbox{if } \omega = arg \min_{v \in V} D(v, x_i) \\
+0 & \mbox{otherwise}
+\end{array}
+\right.
 \end{equation}
-As result we obtain an index vector that associate each local feature with its closest codeword index of the vocabulary.
 
 \subsubsection{Soft assignment}
 
@@ -51,11 +55,11 @@ Figure \ref{fig:softAssignment} illustrates both these problems. The small dots 
 
 In Kernel Codebook approach we apply techniques from kernel density estimation to allow a degree of ambiguity in assigning codewords to image features. 
 
-For each local feature $v$ we evaluate
+For each codeword $\omega$ we evaluate
 \begin{equation}
-KCB(v) = \frac{1}{n} \sum_{i = 1}^{n} K_{\sigma}(d(v, \omega_i))
+KCB(\omega) = \frac{1}{n} \sum_{i = 1}^{n} K_{\sigma}(d(\omega, x_i))
 \end{equation}
-where $n$ is the number of regions, $r_i$ is the image region $i$ and $K_{\sigma}$ is the kernel function defined as
+where $n$ is the number of local features, $x_i$ is the local feature $i$ and $K_{\sigma}$ is the kernel function defined as
 \begin{equation}
 K_{\sigma} (x) = \frac{1}{\sqrt{2\pi} \sigma} e^{- \frac{1}{2} \frac{x^2}{\sigma^2}}
 \end{equation}
@@ -65,7 +69,7 @@ In essence, Kernel Codebook smoothes the hard mapping of features in an image re
 
 Codeword uncertainty indicates that one image region may distribute probability mass to more than one codeword.
 \begin{equation}
-UNC(v) = \frac{1}{n} \sum_{i = 1}^{n} \frac{K_{\sigma}(d(v, \omega_i))}{\sum_{j=1}^{|V|} K_{\sigma}(d(\omega_j, r_i))}
+UNC(\omega) = \frac{1}{n} \sum_{i = 1}^{n} \frac{K_{\sigma}(d(\omega, x_i))}{\sum_{j=1}^{|V|} K_{\sigma}(d(\omega_j, x_i))}
 \end{equation}
 
 \paragraph{Localized soft assignment}
@@ -80,7 +84,7 @@ d(x_i, \omega_j) & \mbox{if } \omega_j \in \mathcal{N}_k(x_i) \\
 \end{array}
 \right.
 \end{equation}
-where $\mathcal{N}_k$ is the set of the $k$ nearest visual words at $x_i$. At this poi we che use codeword uncertainty with $\hat{d}$ as distances.
+where $\mathcal{N}_k$ is the set of the $k$ nearest visual words at $x_i$. At this point we can use codeword uncertainty with $\hat{d}$ as distances.
 
 \subsection{Bag of Feature representation}
 

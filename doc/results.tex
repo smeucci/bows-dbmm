@@ -1,10 +1,12 @@
 \section{Experimental results}
 
-For our experiments we use a subset of 15 categories of the \emph{Caltech-101} dataset, about 2537 images split between distinct object categories (faces, watches, elephants, motorbikes, etc.)\footnote{\emph{Caltech-101} has been created at the \emph{California Institute of Technology} - http://www.vision.caltech.edu/Image\_Datasets/Caltech101/}. Image descriptors are precomputed over the whole dataset and stored on separate files.. All tests were performed on a Mac OSX Notebook with an Intel Core i5, 8GB (running at 2.4 GHz).
+For our experiments we use a subset of 15 categories of the \emph{Caltech-101} dataset, about 2537 images split between 15 distinct object categories (faces, watches, elephants, motorbikes, etc.)\footnote{\emph{Caltech-101} has been created at the \emph{California Institute of Technology} - http://www.vision.caltech.edu/Image\_Datasets/Caltech101/}. Image descriptors are precomputed over the whole dataset and stored on separate files.. All tests were performed on a Mac OSX Notebook with an Intel Core i5, 8GB (running at 2.4 GHz).
 
 Tests have been made on varying of these parameters: train set size, vocabulary size and SIFT descriptor type (\emph{dense, sparse, multi-scale}). Finally, a comparison between \emph{hard} and \emph{soft assignment} is presented. Test set size is always set to 30 (30 images from each category).
 
-In Table \ref{tab:trainsetsize} the classification accuracy on varying training set size (the number shown represent how many images are taken from each category) are shown. As we can see in Table \ref{tab:trainsetsize} the larger the training set size the better the accuracy obtained due the greater number of examples used to create the model.
+To obtain reliable results, we repeat the experimental processes 10 times, than the mean average accuracy is evaluated.
+
+In Table \ref{tab:trainsetsize} the classification accuracy on varying training set size (the number shown represent how many images are taken from each category) are shown. As we can see in Table \ref{tab:trainsetsize} the larger the training set size the better the accuracy obtained (with fixed vocabulary size) due the greater number of examples used to create the model.
 
 \begin{table}[h]
 \begin{center}
@@ -56,17 +58,14 @@ SVM RBF & 71,56 & 71,78 & 71,89 \\
 \caption{Classification accuracy (\%) on varying SIFT type}
 \end{table}
 
+In Figure \ref{fig:soft} a comparison between hard and soft assignment performance is presented. In the results the kernel codebook method has excluded due its worst results\cite{Gemert:2008:KCS:1478172.1478227}.
 
-
+The results show that localized codeword uncertainty outperforms both hard assignment and codeword uncertainty. The $k$ value for localized codeword uncertainty has been set to 5. The kernel size obtained by cross-validation for soft assignment is typically 45. As evidenced by Figure \ref{soft}, the \emph{early cut- off} strategy can improve the classification performance of soft-assignment coding.
 
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.45\textwidth]{images/soft-comparison.png}
 \end{center}
   \caption{Comparison between hard and soft assignment}
-\label{fig:vocabulary}
+\label{fig:soft}
 \end{figure}
-
-
-
-
