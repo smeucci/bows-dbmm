@@ -1,10 +1,10 @@
 \section{Experimental results}
 
-For our experiments we use the \emph{Caltech-15} dataset, a digital image dataset containing about 2537 images  split between 15 distinct object categories (faces, watches, elephants, motorbikes, etc.)\footnote{\emph{Caltech-15} has been created at the \emph{California Institute of Technology}}. Image descriptors are precomputed over the whole dataset and stored on separate files.. All tests were performed on a Mac OSX Notebook with an Intel Core i5, 8GB (running at 2.4 GHz).
+For our experiments we use a subset of 15 categories of the \emph{Caltech-101} dataset, about 2537 images split between distinct object categories (faces, watches, elephants, motorbikes, etc.)\footnote{\emph{Caltech-101} has been created at the \emph{California Institute of Technology} - http://www.vision.caltech.edu/Image_Datasets/Caltech101/}. Image descriptors are precomputed over the whole dataset and stored on separate files.. All tests were performed on a Mac OSX Notebook with an Intel Core i5, 8GB (running at 2.4 GHz).
 
-Tests have been made on varying of these parameters: train set size, vocabulary size and SIFT descriptor type (\emph{dense, sparse, multi-scale}). At least a comparison between \emph{hard} and \emph{soft assignment} is presented. Test set size is always set to 30 (30 images from each category).
+Tests have been made on varying of these parameters: train set size, vocabulary size and SIFT descriptor type (\emph{dense, sparse, multi-scale}). Finally, a comparison between \emph{hard} and \emph{soft assignment} is presented. Test set size is always set to 30 (30 images from each category).
 
-In Table \ref{tab:trainsetsize} the classification accuracies on varying training set size (the number shown represent how many images taken from each category) are shown. As we can see in Table \ref{tab:trainsetsize} the larger the training set size the better accuracy is obtained due the greater number of examples used to create the model.
+In Table \ref{tab:trainsetsize} the classification accuracy on varying training set size (the number shown represent how many images are taken from each category) are shown. As we can see in Table \ref{tab:trainsetsize} the larger the training set size the better the accuracy obtained due the greater number of examples used to create the model.
 
 \begin{table}[h]
 \begin{center}
@@ -25,7 +25,7 @@ SVM RBF & 57,56 & 71,78 & 72,31 \\
 \caption{Classification accuracies on varying training set size}
 \end{table}
 
-In Figure \ref{fig:vocabulary} it is shown the classification accuracies variation on growing vocabulary size. All tests have been made fixing training set size to 30 and using \emph{dense SIFT}. Generally the greater the number of codewords used the greater the accuracy obtained.
+In Figure \ref{fig:vocabulary} it is shown the classification accuracy variation on growing the vocabulary size. All tests have been made fixing training set size to 30 and using \emph{dense SIFT}. Generally the greater the number of codewords used the greater the accuracy obtained. We attribute this performance boost to the ability of the vocabulary to be more expressive, leading to a more discriminant representation of each image.
 
 \begin{figure}[h]
 \begin{center}
@@ -34,6 +34,8 @@ In Figure \ref{fig:vocabulary} it is shown the classification accuracies variati
   \caption{Classification accuracies on growing vocabulary size}
 \label{fig:vocabulary}
 \end{figure}
+
+In Table \ref{tab:sifttype} it is shown the classification accuracy variation on varying of local features extractor for SIFT descriptor. It is highlighted that dense SIFT reached better accuracy than sparse SIFT due to the greater number of key-points extracted from each images and the spatial homogeneity of key-points distribution. Even better performance is obtained by multi-scale sampling of dense SIFT. 
 
 \begin{table}[h]
 \begin{center}
@@ -53,6 +55,9 @@ SVM RBF & 71,56 & 71,78 & 71,89 \\
 \label{tab:sifttype}
 \caption{Classification accuracies on varying SIFT type}
 \end{table}
+
+
+
 
 \begin{figure}[h]
 \begin{center}
