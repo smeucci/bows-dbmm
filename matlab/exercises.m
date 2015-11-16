@@ -46,11 +46,11 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_hard_feat_quantization = 0;
 
-gaussian_kernel_sigma = 45;
-do_soft_feat_sigma_crossval = 1;
+gaussian_kernel_sigma = 51;
+do_soft_feat_sigma_crossval = 0;
 do_soft_feat_quantization_KCB = 0;
 do_soft_feat_quantization_UNC = 1;
-do_truncated_soft_assignment = 0;
+do_truncated_soft_assignment = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
@@ -286,7 +286,8 @@ end
 if (do_soft_feat_quantization_KCB || do_soft_feat_quantization_UNC)...
         && (do_soft_feat_sigma_crossval)
     
-    gaussian_kernel_sigma = crossvalidateSigma(desc_train, desc_test, VC, 48, 65, 1)
+    gaussian_kernel_sigma = crossvalidateSigma(desc_train, desc_test, VC, 30, 65, 1,...
+        do_truncated_soft_assignment, num_knn);
 
 end
 

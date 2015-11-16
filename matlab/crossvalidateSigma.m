@@ -1,14 +1,22 @@
-function bestSigma = crossvalidateSigma(train, test, VC, minValue, maxValue, step)
+function bestSigma = crossvalidateSigma(train, test, VC, minValue, maxValue, step, do_truncated, num_knn)
 
     bestSigma = 0;
     bestAccuracy = 0;
     
     fprintf('\nSoft assignment sigma crossvalidation\n');
+    if do_truncated
+        fprintf('Truncated version\n');
+    end
     
     for sigma = minValue:step:maxValue
         for i=1:length(train)  
           dmat = eucliddist(train(i).sift, VC);
-          gaussian_kernel = gaussianKernel(dmat, sigma);
+          if do_truncated
+              dmat_trunc = kNearestNeighbours(dmat, num_knn);
+              gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+          else
+              gaussian_kernel = gaussianKernel(dmat, sigma);
+          end
           unc = bsxfun(@rdivide, gaussian_kernel, sum(gaussian_kernel, 2));
           h = sum(unc, 1)/size(gaussian_kernel, 1);
           h = h./norm(h, 1);
@@ -18,7 +26,12 @@ function bestSigma = crossvalidateSigma(train, test, VC, minValue, maxValue, ste
 
         for i=1:length(test)    
           dmat = eucliddist(test(i).sift, VC);
-          gaussian_kernel = gaussianKernel(dmat, sigma);
+          if do_truncated
+              dmat_trunc = kNearestNeighbours(dmat, num_knn);
+              gaussian_kernel = gaussianKernel(dmat_trunc, sigma);
+          else
+              gaussian_kernel = gaussianKernel(dmat, sigma);
+          end
           unc = bsxfun(@rdivide, gaussian_kernel, sum(gaussian_kernel, 2));
           h = sum(unc, 1)/size(gaussian_kernel, 1);
           h = h./norm(h, 1);
