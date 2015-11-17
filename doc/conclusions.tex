@@ -1,1 +1,9 @@
 \section{Conclusions}
+
+In this paper, we have analysed the performance of two classifiers, \emph{Nearest Neighbor} and \emph{Suppor Vector Machine}, with varying distance functions and kernel functions, using the \emph{Bag of Words} model. 
+
+The experiments taken on the dataset, lead to the conclusion that there are many parameters that can influence the performance of a classifier.
+The greater the dimension of the training set, the better the classification accuracy, because more examples lead to a more accurate abstraction of the data model; having more codewords improves the performance due to the fact that a larger vocabulary means a more expressive vocabulary and so a histogram more capable of discriminating between images (however, the accuracy boost of a larger vocabulary eventually saturates); the choice of sparse or dense local features, on which the SIFT descriptors are computed, can also influence the classification accuracy, as shown in Table 2.
+
+Finally, we have analysed how different features quantization can influence the performance of a classifier, in particular the difference between \emph{hard-assignment} and \emph{soft-assignment}, as this was our main focus in this paper.
+We have found that by allowing a degree of ambiguity in features quantization, \emph{soft-assignment} is able to improve the classification accuracy of \emph{hard-assignment}. Improvement over the \emph{soft-assignment} can be obtain using the \emph{localized soft-assignment} by taking into account only the k-nearest codewords and in this way removing some noise in the features quantization.
