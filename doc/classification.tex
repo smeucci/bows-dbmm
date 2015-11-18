@@ -1,14 +1,14 @@
 \section{Image classification}
 
-After assigning each images with a BoF we can proceed to the classification step. For that purpose we evaluated the performance of two type of classifier: \emph{Nearest Neighbor} (NN) and \emph{Support Vector Machine} (SVM).
+After the feature quantization step, we can proceed to the classification step. For that purpose we evaluated the performance of two type of classifier: \emph{Nearest Neighbor} (NN) and \emph{Support Vector Machine} (SVM).
 
-\paragraph{Nearest Neighbour}
+\paragraph{Nearest Neighbor}
 
-Nearest Neighbours classifies an image in base of the nearest train example. Those classifiers differentiate each other for distance measure used. In this case only Euclidean distance (L2) and $\chi^2$ distance are been used.
+Nearest Neighbor classifies an image in base of the nearest train example. Those classifiers differentiate each other for distance measure used. In this case only Euclidean distance (L2) and $\chi^2$ distance were been used.
 
 \paragraph{Support Vector Machine}
 
-\emph{Support Vector Machines} classifies an image identifying separation surface on feature space. Those surface are evaluated using different kernel functions. The kernels used in our experiments are:
+\emph{Support Vector Machines} classifies an image identifying a separation surface on feature space. Those surface are evaluated using different kernel functions. The kernels used in our experiments were:
 \begin{itemize}
 \item \emph{Linear kernel}
 \begin{equation}
@@ -27,4 +27,4 @@ K(x, z) = \exp (-\gamma \sum_{i = 1}^{n} \frac{(x_i - z_i)^2}{x_i + z_i})
 K(x, z) = \exp (- \gamma ||x_i - z_i||)
 \end{equation}
 \end{itemize}
-SVM classifier depends on some parameters: C and $\gamma$ values are obtained with 5-fold crossvalidation.
+SVM classifier depends on some parameters: C and $\gamma$ values are obtained with 5-fold cross-validation.

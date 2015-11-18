@@ -1,20 +1,12 @@
 \section{Feature extraction}
 
-%which describes the features employed and their properties.
+Generally, global features are not very robust as a change in part of the image may cause it to fail as it will effect the resulting descriptor, thus they are not very good for image classification.
 
-%- features globali non precise per la classificazione
-%- uso features locali; come le estraggo?
-%- sparse, uso un keypoints detector come harris laplace
-%- dense, prendo keypoints uniformi sull'immagine
-%- Multi-Scale Dense Sampling, prendo keypoints densi a scale diverse dell'immagine.
-%- estratti i keypoints uso sift descriptor per descrivere ogni features locale dell'immagine
-%- perchè sift? proprietà di invarianza, cosa prendono in considerazione di un'immagine.
+For this reason, local features are used, which descriptors describes a patch within an image. Instead of having a single descriptor for the entire image, with local features we have a set of descriptors, each describing a particular local features of the image.
 
-Global features are not very good for image classification, because describing an image as its color or edge distribution is not indicating of a specific class of objects.
+To extract local features descriptors, we first need to detect the \emph{key-points} in an image.
+Key-points can be extracted in three different ways: \emph{sparse}, e.g. using the Harris-Laplace key-points detector; \emph{dense}, key-points are taken on a grid of overlapped patches; \emph{multi-scale dense sampling}, same as dense but taken on varying the image resolution.
 
-For this reason, local features were proposed. A local features of an image is a salient point in an image, like an edge point. Instead of having a single descriptor for the entire image, with local features we have a set of descriptors, each describing a particular local features of the image.
+Once we have the image key-points, we can proceed to compute the local features descriptors, one for each key-points. In literature, many descriptors were proposed; the one used in this study is the SIFT descriptor, a spatial histogram of the image gradients in characterizing the appearance of each key-point, resulting in a vector of 128 elements. 
 
-To extract local features descriptors, we first need to detect the key-points in an image.
-Key-points can be extracted in an image in three different ways: sparse, using the Harris-Laplace key-points detector; dense, key-points are taken on a grid of overlapped patches; multi-scale dense sampling, same as dense but taken varying the resolution of the image.
-
-Once we have the key-points of an image, we can proceed to computed the local features descriptors, one for each key-points. In literature, many descriptors were proposed; the one used in this study is the SIFT descriptor. For each local features it is computed a SIFT descriptor, a vector of 128 elements, that takes into account orientation. SIFT descriptors are invariant to scale, to affine transformation, and to a certain degree to prospective transformation.
+SIFT descriptors are invariant to scale, to affine transformation, and to a certain degree to prospective transformation.
